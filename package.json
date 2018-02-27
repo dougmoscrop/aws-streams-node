@@ -1,0 +1,38 @@
+{
+  "name": "aws-streams",
+  "version": "1.0.0",
+  "description": "A collection of streams-like interfaces to AWS services",
+  "main": "index.js",
+  "scripts": {
+    "test": "nyc --all ava",
+    "posttest": "eslint .",
+    "ava": "ava"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dougmoscrop/aws-streams.git"
+  },
+  "keywords": [
+    "streams",
+    "aws"
+  ],
+  "author": "Doug Moscrop <doug.moscrop@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dougmoscrop/aws-streams/issues"
+  },
+  "homepage": "https://github.com/dougmoscrop/aws-streams#readme",
+  "peerDependencies": {
+    "aws-sdk": "^2.0.0"
+  },
+  "devDependencies": {
+    "ava": "^0.25.0",
+    "aws-sdk": "^2.223.1",
+    "aws-sdk-mock": "^1.7.0",
+    "eslint": "^4.19.1",
+    "get-stream": "^3.0.0",
+    "into-stream": "^3.1.0",
+    "nyc": "^11.6.0",
+    "pump-promise": "^1.0.0"
+  }
+}
