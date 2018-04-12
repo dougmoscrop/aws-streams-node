@@ -154,7 +154,7 @@ test.serial('works (receive data after stop - no flush)', t => {
 
 test.serial('works (receive data after stop - flush true)', t => {
   const { sqsReceiveMessage, completed } = t.context;
-  const  stream = new Stream('foo', { flush: true });
+  const stream = new Stream('foo', { flush: true });
   
   let amount = 0;
   t.context.receiveMessage = (params, cb) => {
@@ -193,27 +193,7 @@ test.serial('errors when SQS response is missing Messages', t => {
         t.fail('should not get here')
       })
       .catch(e => {
-        t.deepEqual(e.message, 'Invalid response from SQS: data.Messages not an array');
-        t.deepEqual(sqsReceiveMessage.stub.callCount, 1);
-      })
-      .then(() => completed);
-});
-
-test.serial('when SQS response contains to many messages', t => {
-  const { sqsReceiveMessage, completed } = t.context;
-  const stream = new Stream('foo');
-
-  t.context.receiveMessage = (params, cb) => {
-    cb(null, { Messages: Array(11).fill({}) });
-    completed.resolve();
-  };
-
-  return getStream.array(stream)
-      .then(() => {
-        t.fail('should not get here');
-      })
-      .catch(e => {
-        t.deepEqual(e.message, 'SQS did not respect MaxNumberOfMessages');
+        t.deepEqual(e.message, 'Invalid response from SQS: data.Messages not an Array');
         t.deepEqual(sqsReceiveMessage.stub.callCount, 1);
       })
       .then(() => completed);
@@ -231,17 +211,14 @@ test.serial('retry on service error', t => {
       error.statusCode = 500;
       cb(error);
     } else {
-      cb(null, { Messages: Array(11).fill({}) });
+      stream.stop();
+      cb(null, { Messages: Array(1).fill({}) });
       completed.resolve();
     }
   };
 
   return getStream.array(stream)
       .then(() => {
-        t.fail('should not get here');
-      })
-      .catch(e => {
-        t.deepEqual(e.message, 'SQS did not respect MaxNumberOfMessages');
         t.deepEqual(sqsReceiveMessage.stub.callCount, 2);
       })
       .then(() => completed);
