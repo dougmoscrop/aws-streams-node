@@ -1,6 +1,6 @@
 {
   "name": "aws-streams",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A collection of streams-like interfaces to AWS services",
   "main": "index.js",
   "scripts": {
