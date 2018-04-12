@@ -179,12 +179,12 @@ test.serial('works (receive data after stop - flush true)', t => {
       });
 });
 
-test.serial('errors when SQS response is missing Messages', t => {
+test.serial('errors when thrown', t => {
   const { sqsReceiveMessage, completed } = t.context;
   const stream = new Stream('foo');
 
   t.context.receiveMessage = (params, cb) => {
-    cb(null, {});
+    cb(new Error('test'));
     completed.resolve();
   };
 
@@ -193,7 +193,7 @@ test.serial('errors when SQS response is missing Messages', t => {
         t.fail('should not get here')
       })
       .catch(e => {
-        t.deepEqual(e.message, 'Invalid response from SQS: data.Messages not an Array');
+        t.deepEqual(e.message, 'test');
         t.deepEqual(sqsReceiveMessage.stub.callCount, 1);
       })
       .then(() => completed);
