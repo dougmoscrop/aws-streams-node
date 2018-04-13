@@ -223,3 +223,26 @@ test.serial('retry on service error', t => {
       })
       .then(() => completed);
 });
+
+test.serial('passes through receiveParams', t => {
+  const { sqsReceiveMessage, completed } = t.context;
+  const stream = new Stream('foo', {
+    receiveParams: {
+      VisibilityTimeout: 30,
+      WaitTimeSeconds: 60
+    }
+  });
+
+  t.context.receiveMessage = (params, cb) => {
+    cb(null, { Messages: Array(1).fill({}) });
+    stream.stop();
+    completed.resolve();
+  };
+
+  return getStream.array(stream)
+      .then(() => {
+        t.deepEqual(sqsReceiveMessage.stub.callCount, 1);
+        t.deepEqual(sqsReceiveMessage.stub.firstCall.args[0], { QueueUrl: 'foo', VisibilityTimeout: 30, WaitTimeSeconds: 60 });
+      })
+      .then(() => completed);
+});
