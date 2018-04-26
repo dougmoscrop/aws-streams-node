@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dougmoscrop/aws-streams.git"
+    "url": "git+https://github.com/dougmoscrop/aws-streams-node.git"
   },
   "keywords": [
     "streams",
@@ -19,9 +19,9 @@
   "author": "Doug Moscrop <doug.moscrop@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dougmoscrop/aws-streams/issues"
+    "url": "https://github.com/dougmoscrop/aws-streams-node/issues"
   },
-  "homepage": "https://github.com/dougmoscrop/aws-streams#readme",
+  "homepage": "https://github.com/dougmoscrop/aws-streams-node#readme",
   "peerDependencies": {
     "aws-sdk": "^2.0.0"
   },
