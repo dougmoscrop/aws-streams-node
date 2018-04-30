@@ -2,7 +2,7 @@
 
 const test = require('ava');
 
-const index = require('../');
+const index = require('../../');
 
 test('exports stuff', t => {
   t.deepEqual(typeof index.kinesis, 'object');

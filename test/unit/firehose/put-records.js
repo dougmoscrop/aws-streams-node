@@ -5,7 +5,7 @@ const aws = require('aws-sdk-mock');
 const intoStream = require('into-stream');
 const pump = require('pump-promise');
 
-const Stream = require('../../lib/firehose/put-records');
+const Stream = require('../../../lib/firehose/put-records');
 
 test.beforeEach(t => {
   t.context.firehosePutRecordBatch = aws.mock('Firehose', 'putRecordBatch', (params, cb) => {

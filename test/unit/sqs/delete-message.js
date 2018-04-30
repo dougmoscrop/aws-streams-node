@@ -5,7 +5,7 @@ const aws = require('aws-sdk-mock');
 const intoStream = require('into-stream');
 const pump = require('pump-promise');
 
-const Stream = require('../../lib/sqs/delete-message');
+const Stream = require('../../../lib/sqs/delete-message');
 
 test.beforeEach(t => {
   t.context.sqsDeleteMessageBatch = aws.mock('SQS', 'deleteMessageBatch', (params, cb) => {

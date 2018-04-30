@@ -4,8 +4,8 @@ const test = require('ava');
 const aws = require('aws-sdk-mock');
 const getStream = require('get-stream');
 
-const deferred = require('../_deferred');
-const Stream = require('../../lib/sqs/receive-message');
+const deferred = require('../../_deferred');
+const Stream = require('../../../lib/sqs/receive-message');
 
 test.beforeEach(t => {
   t.context.sqsReceiveMessage = aws.mock('SQS', 'receiveMessage', (params, cb) => {

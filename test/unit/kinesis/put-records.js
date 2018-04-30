@@ -5,7 +5,7 @@ const aws = require('aws-sdk-mock');
 const intoStream = require('into-stream');
 const pump = require('pump-promise');
 
-const Stream = require('../../lib/kinesis/put-records');
+const Stream = require('../../../lib/kinesis/put-records');
 
 test.beforeEach(t => {
   t.context.kinesisPutRecords = aws.mock('Kinesis', 'putRecords', (params, cb) => {
