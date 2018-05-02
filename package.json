@@ -6,6 +6,7 @@
   "scripts": {
     "test": "nyc --all ava test/unit",
     "posttest": "eslint .",
+    "test:performance": "ava test/performance",
     "ava": "ava"
   },
   "repository": {
@@ -27,16 +28,12 @@
   },
   "devDependencies": {
     "ava": "^0.25.0",
-    "aws-sdk": "^2.223.1",
-    "aws-sdk-mock": "^1.7.0",
+    "aws-sdk": "^2.232.1",
     "eslint": "^4.19.1",
     "get-stream": "^3.0.0",
     "into-stream": "^3.1.0",
     "nyc": "^11.6.0",
-    "pump-promise": "^1.0.0"
-  },
-  "dependencies": {
-    "bluebird": "^3.5.1",
-    "chunk": "0.0.2"
+    "pump-promise": "^1.0.0",
+    "sinon": "^5.0.7"
   }
 }

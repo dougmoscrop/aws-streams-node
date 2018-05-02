@@ -1,148 +1,74 @@
 'use strict';
 
 const test = require('ava');
-const aws = require('aws-sdk-mock');
-const intoStream = require('into-stream');
-const pump = require('pump-promise');
+const sinon = require('sinon');
 
-const Stream = require('../../../lib/firehose/put-records');
+const PutRecords = require('../../../lib/firehose/put-records');
 
-test.beforeEach(t => {
-  t.context.firehosePutRecordBatch = aws.mock('Firehose', 'putRecordBatch', (params, cb) => {
-    t.context.putRecordBatch(params, cb);
+test('custom client', t => {
+  t.plan(1);
+
+  const client = {};
+  const stream = new PutRecords('foo', { client });
+
+  t.deepEqual(stream.firehose, client);
+});
+
+test('writeRecords provides records and stream name', t => {
+  t.plan(2);
+
+  const stream = new PutRecords('foo');
+
+  const promise = sinon.stub().resolves();
+
+  stream.firehose.putRecordBatch = sinon.stub().returns({
+    promise
   });
-});
 
-test.afterEach(() => {
-  aws.restore('Firehose', 'putRecordBatch');
-});
-
-test.serial('works', t => {
-  const { firehosePutRecordBatch } = t.context;
-  const stream = new Stream('foo');
-
-  t.context.putRecordBatch = (params, cb) => cb(null, {});
-
-  return pump(
-    intoStream.obj([{ Data: 'test1' }]),
-    stream
-  )
-  .then(() => {
-    t.true(firehosePutRecordBatch.stub.calledOnce);
-  });
-});
-
-test.serial('retries on failedPutCount', t => {
-  const { firehosePutRecordBatch } = t.context;
-  const stream = new Stream('foo');
-
-  let callCount = 0;
-  t.context.putRecordBatch = (params, cb) => {
-    if (callCount === 0) {
-      callCount++;
-      const res = {
-        FailedPutCount: 1,
-        RequestResponses: [{
-          ErrorCode: 'test',
-          ErrorMessage: 'testing'
-        }, {
-          ErrorCode: null
-        }]
+  return stream._writeRecords(['test'])
+    .then(() => {
+      const expected = {
+          Records: ['test'],
+          DeliveryStreamName: 'foo'
       };
-      cb(null, res);
-    } else {
-      cb(null, {});
-    }
-  };
-
-  return pump(
-    intoStream.obj([[{ Data: 'test1' }, { Data: 'test2' }]]),
-    stream
-  )
-  .then(() => {
-    t.true(firehosePutRecordBatch.stub.calledTwice);
-  });
+      t.deepEqual(stream.firehose.putRecordBatch.callCount, 1);
+      t.deepEqual(stream.firehose.putRecordBatch.firstCall.args[0], expected);
+    });
 });
 
-test.serial('rejects on error', t => {
-  const { firehosePutRecordBatch } = t.context;
-  const stream = new Stream('foo');
+test('getFailedRecords identifies failed', t => {
+  t.plan(1);
 
-  t.context.putRecordBatch = (params, cb) => {
-    cb(new Error('test'));
+  const stream = new PutRecords('foo');
+
+  const data = {
+    FailedPutCount: 1,
+    RequestResponses: [{
+      ErrorCode: 'test',
+      ErrorMessage: 'testing'
+    }, {
+      ErrorCode: null
+    }]
   };
 
-  return pump(
-    intoStream.obj([{ Data: 'test1' }]),
-    stream
-  )
-  .then(() => {
-    t.fail('expected an error');
-  })
-  .catch(e => {
-    t.true(firehosePutRecordBatch.stub.calledOnce);
-    t.deepEqual(e.message, 'test');
-  });
+  const failedRecords = stream._getFailedRecords(['test1', 'test2'], data);
+
+  t.deepEqual(failedRecords, ['test1']);
 });
 
-test.serial('rejects when retryCountExceeded', t => {
-  const { firehosePutRecordBatch } = t.context;
-  const stream = new Stream('foo', { retryLimit: 2, retryDelay: 50 });
+test('getFailedRecords returns empty', t => {
+  t.plan(1);
 
-  t.context.putRecordBatch = (params, cb) => {
-      cb(null, {
-        FailedPutCount: 1,
-        RequestResponses: [{
-          ErrorCode: 'test',
-          ErrorMessage: 'testing'
-        }, {
-          ErrorCode: null
-        }]
-      });
+  const stream = new PutRecords('foo');
+
+  const data = {
+    FailedPutCount: 0,
+    RequestResponses: [{
+      ErrorCode: null
+    }]
   };
 
-  return pump(
-    intoStream.obj([[{ Data: 'test1' }, { Data: 'test2' }]]),
-    stream
-  )
-  .then(() => {
-    t.fail('expected an error');
-  })
-  .catch(e => {
-    t.deepEqual(firehosePutRecordBatch.stub.callCount, 3);
-    t.deepEqual(e, 'Retry limit exceeded');
-  });
-});
+  const failedRecords = stream._getFailedRecords(['test'], data);
 
-test.serial('retries on service error', t => {
-  const { firehosePutRecordBatch } = t.context;
-  const stream = new Stream('foo');
-
-  let callCount = 0;
-  t.context.putRecordBatch = (params, cb) => {
-    if (callCount === 0) {
-      callCount++;
-      const err = new Error();
-      err.statusCode = 500;
-      cb(err);
-    } else {
-      const res = {
-        FailedPutCount: 0,
-        RequestResponses: [{
-          ErrorCode: null
-        }, {
-          ErrorCode: null
-        }]
-      };
-      cb(null, res);
-    }
-  };
-
-  return pump(
-    intoStream.obj([[{ Data: 'test1' }, { Data: 'test2' }]]),
-    stream
-  )
-  .then(() => {
-    t.true(firehosePutRecordBatch.stub.calledTwice);
-  });
+  t.deepEqual(failedRecords, []);
 });
