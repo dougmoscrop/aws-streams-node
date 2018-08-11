@@ -47,7 +47,7 @@ test('rejects when retryCountExceeded due to failed records', t => {
     t.fail('expected an error');
   })
   .catch(e => {
-    t.deepEqual(e, 'Retry limit exceeded');
+    t.deepEqual(e.message, 'Retry limit exceeded');
     t.deepEqual(_writeRecords.callCount, 3);
     t.deepEqual(_getFailedRecords.callCount, 3);
   });
