@@ -2,7 +2,7 @@
 
 This library offers stream-like interfaces to various AWS services.
 
-Most streams will take care of batching but it is up to the user to ensure the batch size is appropriate. The same is true for any given limit on the size of an individual record.
+Most streams will take care of using a batch API when given a batch of records, but it is up to the user to ensure the batch size is appropriate. The same is true for any given limit on the size of an individual record or set of records.
 
 All streams include, where appropriate, backoff and retry with jitter.
 
@@ -48,3 +48,9 @@ const deleteMessage = new sqs.DeleteMessage('queue-url', { client, retryDelay })
 
 receiveMessage.pipe(processMessage).pipe(deleteMessage);
 ```
+
+## Notes/Details
+
+### DynamoDB
+
+DynamoDB uses and expects the DocumentClient as the 'client', not the native / raw DynamoDB service.
