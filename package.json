@@ -27,13 +27,13 @@
     "aws-sdk": "^2.0.0"
   },
   "devDependencies": {
-    "ava": "^0.25.0",
-    "aws-sdk": "^2.356.0",
-    "eslint": "^5.9.0",
+    "ava": "^1.3.1",
+    "aws-sdk": "^2.415.0",
+    "eslint": "^5.15.1",
     "get-stream": "^4.1.0",
     "into-stream": "^4.0.0",
-    "nyc": "^13.1.0",
+    "nyc": "^13.3.0",
     "pump-promise": "^1.0.0",
-    "sinon": "^7.1.1"
+    "sinon": "^7.2.7"
   }
 }
