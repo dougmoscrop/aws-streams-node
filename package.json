@@ -1,6 +1,6 @@
 {
   "name": "aws-streams",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "description": "A collection of streams-like interfaces to AWS services",
   "main": "index.js",
   "scripts": {
@@ -32,7 +32,7 @@
     "eslint": "^5.15.1",
     "get-stream": "^4.1.0",
     "into-stream": "^4.0.0",
-    "nyc": "^13.3.0",
+    "nyc": "^15.1.0",
     "pump-promise": "^1.0.0",
     "sinon": "^7.2.7"
   }
